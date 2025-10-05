@@ -46,20 +46,28 @@ function scoreSentences(sentences, wordFreq) {
 
 function summarize(text, numSentences = 3) {
   const sentences = splitIntoSentences(text);
-  if (sentences.length <= numSentences) return {summary: sentences.join(' '), sentences};
+  if (sentences.length <= numSentences)
+    return { summary: sentences.join(' '), sentences, wordFreq: {} };
+
   const allTokens = tokenizeWords(text);
   const wordFreq = buildWordFreq(allTokens);
   const scored = scoreSentences(sentences, wordFreq);
   const top = scored.sort((a,b) => b.score - a.score).slice(0, numSentences)
-    .sort((a,b) => a.idx - b.idx) // restore original order
+    .sort((a,b) => a.idx - b.idx)
     .map(x => sentences[x.idx]);
-  return { summary: top.join(' '), sentences, selectedIndices: top.map(s => sentences.indexOf(s)) };
+  return { summary: top.join(' '), sentences, wordFreq, selectedIndices: top.map(s => sentences.indexOf(s)) };
 }
 
-// UI wiring
+function extractTopKeywords(wordFreq, n = 5) {
+  const entries = Object.entries(wordFreq).sort((a,b) => b[1]-a[1]);
+  return entries.slice(0, n).map(([w]) => w);
+}
+
+// UI
 document.addEventListener('DOMContentLoaded', () => {
   const input = document.getElementById('inputText');
   const btn = document.getElementById('summarizeBtn');
+  const spinner = document.getElementById('spinner');
   const summaryArea = document.getElementById('summaryArea');
   const summaryText = document.getElementById('summaryText');
   const numSentences = document.getElementById('numSentences');
@@ -68,24 +76,43 @@ document.addEventListener('DOMContentLoaded', () => {
   const copyBtn = document.getElementById('copyBtn');
   const downloadBtn = document.getElementById('downloadBtn');
   const clearBtn = document.getElementById('clearBtn');
+  const keywordsArea = document.getElementById('keywordsArea');
+  const keywordsList = document.getElementById('keywordsList');
 
   btn.addEventListener('click', () => {
     const text = input.value.trim();
     if (!text) { alert('Please paste some text to summarize.'); return; }
     const N = parseInt(numSentences.value, 10) || 3;
-    const result = summarize(text, N);
-    summaryText.textContent = result.summary;
-    summaryArea.classList.remove('hidden');
 
-    // show original sentences and highlight the chosen ones
-    origSentences.innerHTML = '';
-    result.sentences.forEach((s, idx) => {
-      const div = document.createElement('div');
-      div.className = 'orig-sentence' + (result.selectedIndices && result.selectedIndices.includes(idx) ? ' selected' : '');
-      div.textContent = s;
-      origSentences.appendChild(div);
-    });
-    origArea.classList.remove('hidden');
+    // Show spinner
+    spinner.classList.remove('hidden');
+    btn.disabled = true;
+
+    // Simulate short delay to show animation
+    setTimeout(() => {
+      const result = summarize(text, N);
+      summaryText.textContent = result.summary;
+      summaryArea.classList.remove('hidden');
+
+      // --- Keywords ---
+      const topKeywords = extractTopKeywords(result.wordFreq, 5);
+      keywordsList.innerHTML = topKeywords.map(k => `<span class="keyword-chip">${k}</span>`).join('');
+      keywordsArea.classList.remove('hidden');
+
+      // --- Original sentences with highlights ---
+      origSentences.innerHTML = '';
+      result.sentences.forEach((s, idx) => {
+        const div = document.createElement('div');
+        div.className = 'orig-sentence' + (result.selectedIndices && result.selectedIndices.includes(idx) ? ' selected' : '');
+        div.textContent = s;
+        origSentences.appendChild(div);
+      });
+      origArea.classList.remove('hidden');
+
+      // Hide spinner
+      spinner.classList.add('hidden');
+      btn.disabled = false;
+    }, 600);
   });
 
   copyBtn.addEventListener('click', async () => {
@@ -112,6 +139,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   clearBtn.addEventListener('click', () => {
     input.value = '';
-    summaryArea.classList.add('hidden'); origArea.classList.add('hidden');
+    summaryArea.classList.add('hidden');
+    origArea.classList.add('hidden');
+    keywordsArea.classList.add('hidden');
   });
 });
