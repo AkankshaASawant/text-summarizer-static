@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Tiny Summarizer — 3-sentence summary</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="container">
+    <h1>Tiny Text Summarizer</h1>
+    <p class="lead">Paste a news article or blog post and get a 3-sentence summary (client-side).</p>
+
+    <label for="inputText">Article / Text</label>
+    <textarea id="inputText" rows="10" placeholder="Paste article text here..."></textarea>
+
+    <div class="controls">
+      <label>Summary sentences:
+        <select id="numSentences">
+          <option value="3" selected>3</option>
+          <option value="2">2</option>
+          <option value="4">4</option>
+        </select>
+      </label>
+
+      <button id="summarizeBtn">Summarize</button>
+      <button id="clearBtn" class="secondary">Clear</button>
+    </div>
+
+    <section id="summaryArea" class="hidden">
+      <h2>Summary</h2>
+      <div id="summaryText" class="summary-box"></div>
+      <div class="summary-actions">
+        <button id="copyBtn">Copy</button>
+        <button id="downloadBtn">Download .txt</button>
+      </div>
+    </section>
+
+    <section id="origArea" class="hidden">
+      <h3>Original sentences (highlighted)</h3>
+      <div id="origSentences" class="orig-box"></div>
+    </section>
+
+    <footer>
+      <small>Built with a simple extractive TF summarizer — no server required.</small>
+    </footer>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
