@@ -17,3 +17,7 @@ Open `index.html` in your browser.
 1. Push this repo to GitHub.
 2. In the repo settings -> Pages, set source to `main` branch / root.
 3. Save — your site will be published under `https://<username>.github.io/<repo>/`.
+
+### Extra Touches Added
+- **Keyword Extraction:** Displays top 5 keywords from the article based on word frequency.
+- **Loading Animation:** Added a spinner animation while the summary is being generated for a smoother user experience.
