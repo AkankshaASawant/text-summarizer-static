@@ -201,7 +201,7 @@ Feel free to fork, modify, and learn from it.
 **Akanksha Sawant**
 📍 Pune, India
 💼 Data Science Graduate | Aspiring AI Engineer
-🔗 [LinkedIn](https://www.linkedin.com/in/) | [GitHub](https://github.com/)
+🔗 [LinkedIn]([https://www.linkedin.com/in/](https://www.linkedin.com/in/akanksha-sawant-29260226a)) | [GitHub]([https://github.com/](https://github.com/AkankshaASawant))
 
 ---
 
